@@ -1,11 +1,13 @@
 import os
 import glob
+import shutil
 from pdb import set_trace as bp
 
 PREFIX = "/media/smilelab/" #have problem with file position
 INPUTDIR = "Lynnsey/UCF-101/UCF-101_frames_flow/";
 
-PATH = os.getcwd();
+#PATH = os.getcwd();
+PATH = os.path.normpath(os.path.join(os.getcwd(), os.pardir))
 #OUTPUTDIR = PATH + "/mergedFrames"
 OUTPUTDIR = PATH + "/testFrames"
 TENFRAMES = PATH + "/tenframes"
@@ -120,19 +122,54 @@ def retrieve( labels ):
 	videoDict = videoProcess( videos )
 	imageDict = dict()
 	#for video in videos:
-	input = getInput()
-	input.sort( key=str.lower )
+	#input = getInput()
+	#input.sort( key=str.lower )
+	bp()
+	print input
 	for video in input:
 		videoNum = getVideoNum( videoDict, video )
 		label = video.split("_")[1]
 		actionLabel = labels[ label ]
 		frames =  os.listdir(PREFIX+INPUTDIR+ video );
+		frames.sort()
 		imageDict.clear()
-		bp()
+		#bp()
 		for frame in frames:
-			tokens = frame.split( "_" );
-			
-if __name__== "__main__":	
+			tokens = frame.split( "_" )
+			frameType = "_".join( tokens[ : -1 ] )
+			if frameType not in imageDict:
+				imageDict[ frameType ] = []
+			imageDict[ frameType ].append( video + "/" + frame )
+		for token in imageDict.keys():
+			subfolder = ""
+			#if token == "img":
+			#	bp()
+			if token == "flow_x":
+				subfolder = FLOW_X
+			elif token == "flow_y":
+				subfolder = FLOW_Y
+			else:
+				subfolder = RGB
+			# token is one of flow_x, flow_y or img
+			imageDict[ token ].sort( key = str.lower )
+			jpgs = imageDict[ token ]
+			i = 1
+			for jpg in jpgs:
+				srcFile = PREFIX + INPUTDIR + jpg
+				#frame = jpg.split( "/" )[ 0 ]
+				image = jpg.split( "/" )[ 1 ]
+				shutil.copy( srcFile, OUTPUTDIR + "/" + subfolder )
+				dstFile = OUTPUTDIR + "/" + subfolder + "/" + image
+				newName = "_".join([ str(i).rjust( 3, '0' ), 
+						     str(actionLabel).rjust( 3, '0' ), 
+						     str(videoNum).rjust( 3, '0' ) ]) + ".jpg"
+				newFile = OUTPUTDIR + "/" + subfolder + "/" + newName
+				os.rename( dstFile, newFile )
+				i += 1
+				if i > 100:
+					break
+	print "mission complete"
+					
+if __name__== "__main__":
 	labels = getLabel( PATH + "/classInd.txt")
-	bp()
 	retrieve( labels )
