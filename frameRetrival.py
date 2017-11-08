@@ -8,8 +8,8 @@ INPUTDIR = "Lynnsey/UCF-101/UCF-101_frames_flow/";
 
 #PATH = os.getcwd();
 PATH = os.path.normpath(os.path.join(os.getcwd(), os.pardir))
-#OUTPUTDIR = PATH + "/mergedFrames"
-OUTPUTDIR = PATH + "/testFrames"
+OUTPUTDIR = PATH + "/mergedFrames"
+#OUTPUTDIR = PATH + "/testFrames"
 TENFRAMES = PATH + "/tenframes"
 
 FLOW_X = "flow_x"
@@ -23,7 +23,7 @@ TEST_FRAME1 = "v_YoYo_g19_c05"
 TEST_FRAME2 = "v_YoYo_g21_c01"
 TEST_FRAME3 = "v_YoYo_g22_c06"
 
-input = {TEST_FRAME1, TEST_FRAME2, TEST_FRAME3};
+#input = {TEST_FRAME1, TEST_FRAME2, TEST_FRAME3};
 #input = {TEST_FRAME6};
 
 def getInput():
@@ -121,12 +121,12 @@ def retrieve( labels ):
 	videos = getVideos()
 	videoDict = videoProcess( videos )
 	imageDict = dict()
-	#for video in videos:
+	for video in videos:
 	#input = getInput()
 	#input.sort( key=str.lower )
-	bp()
-	print input
-	for video in input:
+	#bp()
+	#print input
+	#for video in input:
 		videoNum = getVideoNum( videoDict, video )
 		label = video.split("_")[1]
 		actionLabel = labels[ label ]
@@ -154,6 +154,8 @@ def retrieve( labels ):
 			imageDict[ token ].sort( key = str.lower )
 			jpgs = imageDict[ token ]
 			i = 1
+			newName = ""
+			newFile = ""
 			for jpg in jpgs:
 				srcFile = PREFIX + INPUTDIR + jpg
 				#frame = jpg.split( "/" )[ 0 ]
@@ -168,6 +170,13 @@ def retrieve( labels ):
 				i += 1
 				if i > 100:
 					break
+			while i <= 100:
+				newName = "_".join([ str(i).rjust( 3, '0' ), 
+						     str(actionLabel).rjust( 3, '0' ), 
+						     str(videoNum).rjust( 3, '0' ) ]) + ".jpg"
+				shutil.copy( newFile, OUTPUTDIR + "/" + subfolder + "/" + newName )
+				i += 1
+	
 	print "mission complete"
 					
 if __name__== "__main__":
