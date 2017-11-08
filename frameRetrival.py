@@ -1,7 +1,6 @@
 import os
 import glob
 import shutil
-from pdb import set_trace as bp
 
 PREFIX = "/media/smilelab/" #have problem with file position
 INPUTDIR = "Lynnsey/UCF-101/UCF-101_frames_flow/";
@@ -87,8 +86,6 @@ def twoVideoRetrieve( labels ):
 			if len(srcimgs) < 10:
 				srcimgs.append(imgs[-1])
 			for img in srcimgs: 
-				#frame = img.split("/")[-1]
-				#frameNum = frame.split( "_" )[-1].split(".")[0][ -3 : ]
 				frameNum += 1
 				videoNum = videoDict[ action ][ video ]
 				newFileName = str( frameNum ).rjust( 3, '0' ) + \
@@ -124,8 +121,6 @@ def retrieve( labels ):
 	for video in videos:
 	#input = getInput()
 	#input.sort( key=str.lower )
-	#bp()
-	#print input
 	#for video in input:
 		videoNum = getVideoNum( videoDict, video )
 		label = video.split("_")[1]
@@ -133,7 +128,6 @@ def retrieve( labels ):
 		frames =  os.listdir(PREFIX+INPUTDIR+ video );
 		frames.sort()
 		imageDict.clear()
-		#bp()
 		for frame in frames:
 			tokens = frame.split( "_" )
 			frameType = "_".join( tokens[ : -1 ] )
@@ -142,8 +136,6 @@ def retrieve( labels ):
 			imageDict[ frameType ].append( video + "/" + frame )
 		for token in imageDict.keys():
 			subfolder = ""
-			#if token == "img":
-			#	bp()
 			if token == "flow_x":
 				subfolder = FLOW_X
 			elif token == "flow_y":
@@ -158,7 +150,6 @@ def retrieve( labels ):
 			newFile = ""
 			for jpg in jpgs:
 				srcFile = PREFIX + INPUTDIR + jpg
-				#frame = jpg.split( "/" )[ 0 ]
 				image = jpg.split( "/" )[ 1 ]
 				shutil.copy( srcFile, OUTPUTDIR + "/" + subfolder )
 				dstFile = OUTPUTDIR + "/" + subfolder + "/" + image
@@ -176,7 +167,6 @@ def retrieve( labels ):
 						     str(videoNum).rjust( 3, '0' ) ]) + ".jpg"
 				shutil.copy( newFile, OUTPUTDIR + "/" + subfolder + "/" + newName )
 				i += 1
-	
 	print "mission complete"
 					
 if __name__== "__main__":
